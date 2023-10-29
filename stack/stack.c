@@ -15,11 +15,11 @@ struct STACK_NAME(type,_stack_t) { \
 };\
 \
 STACK_NAME(type,_stack_t) *STACK_NAME(type,_stack_create)(){ \
-    STACK_NAME(type,_stack_t) *stack=calloc(1,sizeof(STACK_NAME(type,_stack_t)));\
+    STACK_NAME(type,_stack_t) *stack=(STACK_NAME(type,_stack_t)*)calloc(1,sizeof(STACK_NAME(type,_stack_t)));\
     if( stack == NULL ){ \
         return NULL; \
     }\
-    stack->data=calloc(DEFAULT_MAX_STACK_SIZE,sizeof(type));\
+    stack->data=(type *)calloc(DEFAULT_MAX_STACK_SIZE,sizeof(type));\
     if( stack->data == NULL ){\
         free( stack );\
         return NULL;\
@@ -29,12 +29,17 @@ STACK_NAME(type,_stack_t) *STACK_NAME(type,_stack_create)(){ \
     return stack;\
 } \
 \
+void STACK_NAME(type,_stack_destroy)(STACK_NAME(type,_stack_t) *stack){\
+    free(stack->data);\
+    free(stack);\
+}\
+\
 int STACK_NAME(type,_stack_resize)(STACK_NAME(type,_stack_t) *stack, uint64_t new_max_size){\
     if( new_max_size < stack->size ){\
         errno = EPERM; \
         return -1;\
     }\
-    type *new_data = reallocarray(stack->data, new_max_size, sizeof(type));\
+    type *new_data=(type *)realloc(stack->data, new_max_size * sizeof(type));\
     if( new_data ){\
         stack->data = new_data;\
         stack->max_size = new_max_size;\
@@ -63,6 +68,7 @@ type STACK_NAME(type,_stack_pop)(STACK_NAME(type,_stack_t) *stack){\
     return 0;\
 };
 
+#ifndef EXCLUDE_MAIN
 DEFINE_STACK(int)
 DEFINE_STACK(float)
 
@@ -82,5 +88,8 @@ int main(int argc, char *argv[]){
         printf("Popped: %3.2f\n", float_stack_pop(sf));
     }
 
+    int_stack_destroy(si);
+    float_stack_destroy(sf);
     return 0;
 }
+#endif
