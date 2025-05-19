@@ -16,5 +16,6 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 include(GoogleTest)
 
+add_subdirectory(kdtree)
 add_subdirectory(stack)
 add_subdirectory(queue)

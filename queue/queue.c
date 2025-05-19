@@ -3,7 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-
+// change max_size to capacity
+// try returning (type){0} instead of 0 on failed pop
+// consider safe pop/try_pop
+// consider making it thread safe
 const uint64_t DEFAULT_MAX_QUEUE_SIZE=5;
 
 #define QUEUE_NAME(type,name) type##name
